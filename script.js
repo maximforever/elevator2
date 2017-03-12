@@ -18,14 +18,7 @@ function main(){
 
 	/* listeners*/
 
-	$(".floor").click(function(){
-		 
-		
-	});
-
-
-
-	$(".call-button").click(function(){
+	$(".call-button").click(function(){					// calls from outside the elevator, buttons on the lobby wall
 		var dir;
 		var fl = Number($(this).attr("data-floor"));	// attr("data-floor") is a string, I think - so we need to coerce it into a number.
 
@@ -45,14 +38,14 @@ function main(){
 
 	});
 
-	$(".floor-button").click(function(){
+	$(".floor-button").click(function(){					// calls from inside the elevator, buttons on the panel
 		
 
-		var nextFloor = $(this).attr("id");
+		var nextFloor = Number($(this).attr("id"));			// attr("id") is a string, I think - so we need to coerce it into a number.
 		if(floorQueue.indexOf(nextFloor) == -1 && el.floor !== nextFloor){
-				floorQueue.push(Number($(this).attr("id")));				// attr("id") is a string, I think - so we need to coerce it into a number.
+				floorQueue.push(nextFloor);				
 				$(this).addClass("selected");
-				v
+				$("#floor-" + nextFloor).addClass("next-floor"); 
 		}
 	});
 
@@ -111,13 +104,15 @@ function mainLoop(){
 		console.log("removed floor " + el.floor + " from floorQueue");
 	}
 
-	if(floorPos != -1 && elQueue[floorPos][1] == el.dir){						// if someone made a call from this floor in the direction we're heading in, let's pick them up and remove this floor from the queue
+	if(floorPos != -1 && (elQueue[floorPos][1] == el.dir || floorQueue.length == 0)){						// if someone made a call from this floor in the direction we're heading in, let's pick them up and remove this floor from the queue
 		console.log("floorPos is " + floorPos);
 		elQueue.splice(floorPos, 1);											// remove that floor from queue - floorPos for the position of the element in the array, and 1 for how many elements to slice
 		console.log("we're on the right floor for a call from OUTSIDE the elevator!");
 		console.log("removed floor " + el.floor + " from elQueue");
 		$(".call-button[data-floor='" + el.floor +"'").removeClass("selected");
 	}
+
+
 
 
 	if (floorQueue.length > 0){
